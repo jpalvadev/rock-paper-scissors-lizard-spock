@@ -1,6 +1,7 @@
 // First position Human Score, second position CPU score
 const score = [0, 0];
 
+// Each key is a weapon, and each key has inside another object that contains the winning possibilities for each weapon
 const rules = {
   scissors: { paper: 'cuts', lizard: 'decapitates' },
   paper: { rock: 'covers', spock: 'disproves' },
@@ -9,44 +10,46 @@ const rules = {
   spock: { scissors: 'smashes', rock: 'vaporizes' },
 };
 
-const getComputerPlay = () => {
-  const computerChoices = ['rock', 'paper', 'scissors', 'lizard', 'spock'];
-  return computerChoices[Math.floor(Math.random() * 5)];
-};
+const computerChoices = ['rock', 'paper', 'scissors', 'lizard', 'spock'];
+const playerValidChoices = [...computerChoices, 'exit'];
 
+const getComputerPlay = () => {
+  return computerChoices[Math.floor(Math.random() * computerChoices.length)];
+};
 const checkPlayerSelection = (playerSelection) => {
-  const validInputs = ['rock', 'paper', 'scissors', 'lizard', 'spock', 'exit'];
-  return validInputs.includes(playerSelection) ? true : alert('Wrong choice!');
+  return playerValidChoices.includes(playerSelection)
+    ? true
+    : alert('Wrong choice!');
 };
 
 const getPlayerPlay = (playerSelection) => {
   // ASK for player input.
   do {
     playerSelection = prompt(
-      'Choose your weapon: (Rock, Paper, Scissors, Lizard, Spock, or exit to end the game'
+      `Type ${computerChoices.join(', ')} or exit to end the game`
     );
 
     playerSelection = playerSelection?.toLowerCase() ?? 'exit';
 
-    // Repeat until player input is valid
+    // Repeat the prompt until player input is valid
   } while (!checkPlayerSelection(playerSelection));
 
   return playerSelection;
 };
 
-const getWinner = (pl, cpu) => {
+const getWinner = (plChoice, cpuChoice) => {
   // Human press cancel button or type exit
-  if (pl === 'exit') return 'exit';
+  if (plChoice === 'exit') return 'exit';
 
-  if (pl === cpu) return `Both chose ${pl}. It's a tie.`;
+  if (plChoice === cpuChoice) return `Both chose ${plChoice}. It's a tie.`;
 
-  // Check who won and increase win counter
-  if (cpu in rules[pl]) {
+  // To know how the winning condition works check the rules object structure
+  if (cpuChoice in rules[plChoice]) {
     score[0]++;
-    return `You win! ${pl} ${rules[pl][cpu]} ${cpu}`;
+    return `You win! ${plChoice} ${rules[plChoice][cpuChoice]} ${cpuChoice}`;
   } else {
     score[1]++;
-    return `You lose! ${cpu} ${rules[cpu][pl]} ${pl}`;
+    return `You lose! ${cpuChoice} ${rules[cpuChoice][plChoice]} ${plChoice}`;
   }
 };
 
